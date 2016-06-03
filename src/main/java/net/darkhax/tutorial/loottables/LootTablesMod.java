@@ -1,10 +1,14 @@
 package net.darkhax.tutorial.loottables;
 
+import java.util.Random;
+
 import net.minecraft.init.Items;
+import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootPool;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraft.world.storage.loot.RandomValueRange;
+import net.minecraft.world.storage.loot.conditions.KilledByPlayer;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraft.world.storage.loot.functions.SetCount;
@@ -45,10 +49,27 @@ public class LootTablesMod {
                 
                 // Adds cookies to the loot pool. Has a weight of 10 and spawns in stacks of 1
                 // to 5.
-                pool2.addEntry(new LootEntryItem(Items.COOKIE, 10, 0, new LootFunction[] { new SetCount(new LootCondition[0], new RandomValueRange(1, 5)) }, new LootCondition[0], "loottable:cookie"));
+                pool2.addEntry(new LootEntryItem(Items.COOKIE, 10, 0, new LootFunction[] { new SetCount(new LootCondition[0], new RandomValueRange(1, 5)) }, new LootCondition[0], "tutorial:cookie"));
                 
                 // Adds Lime Green Dye to the loot pool. Has a weight of 10.
-                pool2.addEntry(new LootEntryItem(Items.DYE, 10, 0, new LootFunction[] { new SetDamage(new LootCondition[0], new RandomValueRange(10, 10)) }, new LootCondition[0], "loottable:dyes"));
+                pool2.addEntry(new LootEntryItem(Items.DYE, 10, 0, new LootFunction[] { new SetDamage(new LootCondition[0], new RandomValueRange(10, 10)) }, new LootCondition[0], "tutorial:dyes"));
+            }
+        }
+        
+        // Checks to see if the loot table being loaded is for the mob we are looking for
+        if (event.getName().equals(LootTableList.ENTITIES_PIG)) {
+            
+            // Gets main from the loot table. This pool is where the basic drops like porkchop are.
+            final LootPool main = event.getTable().getPool("main");
+            
+            // Makes sure that the main pool actually exists. It can be deleted by other mods.
+            if (main != null) {
+                
+                // Adds a carrot to the pool. Carrots will now drop just as often as pork chops.
+                main.addEntry(new LootEntryItem(Items.CARROT, 1, 0, new LootFunction[0], new LootCondition[0], "tutorial:carrot"));
+                
+                // Adds an apple to the loot pool. This entry is only used if the pig was killed by a player.
+                main.addEntry(new LootEntryItem(Items.APPLE, 1, 0, new LootFunction[0], new LootCondition[] { new KilledByPlayer(false)}, "tutorial:player"));
             }
         }
     }
